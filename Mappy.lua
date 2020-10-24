@@ -340,7 +340,7 @@ function Mappy:InitializeMinimap()
 end
 
 function Mappy:InitializeAttachedFrames()
-	local attachmenFrame = CreateFrame("Frame", "MappyAttachmentFrame", UIParent, "SecureFrameTemplate")
+	local attachmenFrame = CreateFrame("Frame", "MappyAttachmentFrame", UIParent, "SecureFrameTemplate", BackdropTemplateMixin and "BackdropTemplate")
 	self.AttachmentFrame = attachmenFrame
 
 	-- Give it an initial position
@@ -723,6 +723,9 @@ function Mappy:InitializeDragging()
 end
 
 function Mappy:AdjustBackgroundStyle()
+	if not MinimapBackdrop.SetBackdrop then
+		Mixin(MinimapBackdrop, BackdropTemplateMixin)
+	end
 	if self.CurrentProfile.HideBorder then
 		MinimapBackdrop:SetBackdropBorderColor(0.75, 0.75, 0.75, 0.0)
 		MinimapBackdrop:SetBackdropColor(0.15, 0.15, 0.15, 0.0, 0.0)
@@ -736,6 +739,9 @@ function Mappy:InitializeSquareShape()
 	Minimap:SetMaskTexture("Interface\\Addons\\Mappy\\Textures\\MinimapMask")
 	MinimapBorder:SetTexture(nil)
 	
+	if not MinimapBackdrop.SetBackdrop then
+		Mixin(MinimapBackdrop, BackdropTemplateMixin)
+	end
 	MinimapBackdrop:SetBackdrop({
 		bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
 		edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
@@ -2398,7 +2404,7 @@ Mappy._OptionsPanel = {}
 ----------------------------------------
 
 function Mappy._OptionsPanel:New(pParent)
-	return CreateFrame("Frame", nil, pParent)
+	return CreateFrame("Frame", nil, pParent, BackdropTemplateMixin and "BackdropTemplate")
 end
 
 function Mappy._OptionsPanel:Construct(pParent)
@@ -2413,7 +2419,7 @@ function Mappy._OptionsPanel:Construct(pParent)
 	
 	-- Size slider
 	
-	self.SizeSlider = CreateFrame("Slider", "MappySizeSlider", self, "OptionsSliderTemplate")
+	self.SizeSlider = CreateFrame("Slider", "MappySizeSlider", self, "OptionsSliderTemplate", BackdropTemplateMixin and "BackdropTemplate")
 	self.SizeSlider:SetWidth(380)
 	self.SizeSlider:SetPoint("TOPLEFT", self.Title, "BOTTOMLEFT", 0, -15)
 	self.SizeSlider:SetMinMaxValues(80, 1000)
@@ -2424,7 +2430,7 @@ function Mappy._OptionsPanel:Construct(pParent)
 	
 	-- Alpha slider
 	
-	self.AlphaSlider = CreateFrame("Slider", "MappyAlphaSlider", self, "OptionsSliderTemplate")
+	self.AlphaSlider = CreateFrame("Slider", "MappyAlphaSlider", self, "OptionsSliderTemplate", BackdropTemplateMixin and "BackdropTemplate")
 	self.AlphaSlider:SetWidth(180)
 	self.AlphaSlider:SetPoint("TOPLEFT", self.SizeSlider, "BOTTOMLEFT", 0, -30)
 	self.AlphaSlider:SetScript("OnValueChanged", function (self) Mappy:SetMinimapAlpha(self:GetValue()) end)
@@ -2433,7 +2439,7 @@ function Mappy._OptionsPanel:Construct(pParent)
 	
 	-- Combat alpha slider
 	
-	self.CombatAlphaSlider = CreateFrame("Slider", "MappyCombatAlphaSlider", self, "OptionsSliderTemplate")
+	self.CombatAlphaSlider = CreateFrame("Slider", "MappyCombatAlphaSlider", self, "OptionsSliderTemplate", BackdropTemplateMixin and "BackdropTemplate")
 	self.CombatAlphaSlider:SetWidth(180)
 	self.CombatAlphaSlider:SetPoint("TOPLEFT", self.AlphaSlider, "TOPRIGHT", 20, 0)
 	self.CombatAlphaSlider:SetScript("OnValueChanged", function (self) Mappy:SetMinimapCombatAlpha(self:GetValue()) end)
@@ -2442,7 +2448,7 @@ function Mappy._OptionsPanel:Construct(pParent)
 	
 	-- Movement alpha slider
 	
-	self.MovingAlphaSlider = CreateFrame("Slider", "MappyMovingAlphaSlider", self, "OptionsSliderTemplate")
+	self.MovingAlphaSlider = CreateFrame("Slider", "MappyMovingAlphaSlider", self, "OptionsSliderTemplate", BackdropTemplateMixin and "BackdropTemplate")
 	self.MovingAlphaSlider:SetWidth(180)
 	self.MovingAlphaSlider:SetPoint("TOPLEFT", self.CombatAlphaSlider, "TOPRIGHT", 20, 0)
 	self.MovingAlphaSlider:SetScript("OnValueChanged", function (self) Mappy:SetMinimapMovingAlpha(self:GetValue()) end)
@@ -2451,67 +2457,67 @@ function Mappy._OptionsPanel:Construct(pParent)
 	
 	-- Hide coordinates
 
-	self.HideCoordinatesCheckbutton = CreateFrame("Checkbutton", "MappyHideCoordinatesCheckbutton", self, "OptionsCheckButtonTemplate")
+	self.HideCoordinatesCheckbutton = CreateFrame("Checkbutton", "MappyHideCoordinatesCheckbutton", self, "OptionsCheckButtonTemplate", BackdropTemplateMixin and "BackdropTemplate")
 	self.HideCoordinatesCheckbutton:SetPoint("TOPLEFT", self.AlphaSlider, "TOPLEFT", -5, -45)
 	self.HideCoordinatesCheckbutton:SetScript("OnClick", function (self) Mappy:SetHideCoordinates(self:GetChecked()) end)
 	MappyHideCoordinatesCheckbuttonText:SetText("Hide coordinates")
 
 	-- Hide zone name
 
-	self.HideZoneNameCheckbutton = CreateFrame("Checkbutton", "MappyHideZoneNameCheckbutton", self, "OptionsCheckButtonTemplate")
+	self.HideZoneNameCheckbutton = CreateFrame("Checkbutton", "MappyHideZoneNameCheckbutton", self, "OptionsCheckButtonTemplate", BackdropTemplateMixin and "BackdropTemplate")
 	self.HideZoneNameCheckbutton:SetPoint("TOPLEFT", self.HideCoordinatesCheckbutton, "TOPLEFT", 0, -25)
 	self.HideZoneNameCheckbutton:SetScript("OnClick", function (self) Mappy:SetHideZoneName(self:GetChecked()) end)
 	MappyHideZoneNameCheckbuttonText:SetText("Hide zone name")
 
 	-- Hide North arrow
 
-	self.HideNorthLabelCheckbutton = CreateFrame("Checkbutton", "MappyHideNorthLabelCheckbutton", self, "OptionsCheckButtonTemplate")
+	self.HideNorthLabelCheckbutton = CreateFrame("Checkbutton", "MappyHideNorthLabelCheckbutton", self, "OptionsCheckButtonTemplate", BackdropTemplateMixin and "BackdropTemplate")
 	self.HideNorthLabelCheckbutton:SetPoint("TOPLEFT", self.HideZoneNameCheckbutton, "TOPLEFT", 0, -25)
 	self.HideNorthLabelCheckbutton:SetScript("OnClick", function (self) Mappy:SetHideNorthLabel(self:GetChecked()) end)
 	MappyHideNorthLabelCheckbuttonText:SetText("Hide North label")
 	
 	-- Hide background
 
-	self.HideBorderCheckbutton = CreateFrame("Checkbutton", "MappyHideBorderCheckbutton", self, "OptionsCheckButtonTemplate")
+	self.HideBorderCheckbutton = CreateFrame("Checkbutton", "MappyHideBorderCheckbutton", self, "OptionsCheckButtonTemplate", BackdropTemplateMixin and "BackdropTemplate")
 	self.HideBorderCheckbutton:SetPoint("TOPLEFT", self.HideNorthLabelCheckbutton, "TOPLEFT", 0, -25)
 	self.HideBorderCheckbutton:SetScript("OnClick", function (self) Mappy:SetHideBorder(self:GetChecked()) end)
 	MappyHideBorderCheckbuttonText:SetText("Hide border")
 	
 	-- Flash gathering nodes
 	
-	self.FlashGatherNodesCheckbutton = CreateFrame("Checkbutton", "MappyFlashGatherNodesCheckbutton", self, "OptionsCheckButtonTemplate")
+	self.FlashGatherNodesCheckbutton = CreateFrame("Checkbutton", "MappyFlashGatherNodesCheckbutton", self, "OptionsCheckButtonTemplate", BackdropTemplateMixin and "BackdropTemplate")
 	self.FlashGatherNodesCheckbutton:SetPoint("TOPLEFT", self.HideBorderCheckbutton, "TOPLEFT", 0, -40)
 	self.FlashGatherNodesCheckbutton:SetScript("OnClick", function (self) Mappy:SetFlashGatherNodes(self:GetChecked()) end)
 	MappyFlashGatherNodesCheckbuttonText:SetText("Flash gathering nodes")
 
 	-- Large gathering nodes
 	
-	self.LargeGatherNodesCheckbutton = CreateFrame("Checkbutton", "MappyLargeGatherNodesCheckbutton", self, "OptionsCheckButtonTemplate")
+	self.LargeGatherNodesCheckbutton = CreateFrame("Checkbutton", "MappyLargeGatherNodesCheckbutton", self, "OptionsCheckButtonTemplate", BackdropTemplateMixin and "BackdropTemplate")
 	self.LargeGatherNodesCheckbutton:SetPoint("TOPLEFT", self.FlashGatherNodesCheckbutton, "TOPLEFT", 0, -25)
 	self.LargeGatherNodesCheckbutton:SetScript("OnClick", function (self) Mappy:SetLargeGatherNodes(self:GetChecked()) end)
 	MappyLargeGatherNodesCheckbuttonText:SetText("Large gathering nodes")
 
 	-- Lock position
-	self.LockPositionCheckbutton = CreateFrame("Checkbutton", "MappyLockPositionCheckbutton", self, "OptionsCheckButtonTemplate")
+	self.LockPositionCheckbutton = CreateFrame("Checkbutton", "MappyLockPositionCheckbutton", self, "OptionsCheckButtonTemplate", BackdropTemplateMixin and "BackdropTemplate")
 	self.LockPositionCheckbutton:SetPoint("TOPLEFT", self.LargeGatherNodesCheckbutton, "TOPLEFT", 0, -40)
 	self.LockPositionCheckbutton:SetScript("OnClick", function (self) Mappy:SetLockPosition(self:GetChecked()) end)
 	MappyLockPositionCheckbuttonText:SetText("Lock position")
 
 	-- Ghost
 	
-	self.GhostCheckbutton = CreateFrame("Checkbutton", "MappyGhostCheckbutton", self, "OptionsCheckButtonTemplate")
+	self.GhostCheckbutton = CreateFrame("Checkbutton", "MappyGhostCheckbutton", self, "OptionsCheckButtonTemplate", BackdropTemplateMixin and "BackdropTemplate")
 	self.GhostCheckbutton:SetPoint("TOPLEFT", self.LockPositionCheckbutton, "TOPLEFT", 0, -25)
 	self.GhostCheckbutton:SetScript("OnClick", function (self) Mappy:SetGhost(self:GetChecked()) end)
 	MappyGhostCheckbuttonText:SetText("Pass clicks through")
 
 	-- Attached frames
 	
-	self.DetachManagedFramesCheckbutton = CreateFrame("Checkbutton", "MappyDetachManagedFramesCheckbutton", self, "OptionsCheckButtonTemplate")
+	self.DetachManagedFramesCheckbutton = CreateFrame("Checkbutton", "MappyDetachManagedFramesCheckbutton", self, "OptionsCheckButtonTemplate", BackdropTemplateMixin and "BackdropTemplate")
 	self.DetachManagedFramesCheckbutton:SetPoint("TOPLEFT", self.GhostCheckbutton, "TOPLEFT", 0, -40)
 	self.DetachManagedFramesCheckbutton:SetScript("OnClick", function (button) Mappy:SetDetachManagedFrames(button:GetChecked()) self:OnShow() end)
 	MappyDetachManagedFramesCheckbuttonText:SetText("Detach UI frames (quest watch, durability, etc.)")
 
-	self.LockManagedFramesCheckbutton = CreateFrame("Checkbutton", "MappyLockManagedFramesCheckbutton", self, "OptionsCheckButtonTemplate")
+	self.LockManagedFramesCheckbutton = CreateFrame("Checkbutton", "MappyLockManagedFramesCheckbutton", self, "OptionsCheckButtonTemplate", BackdropTemplateMixin and "BackdropTemplate")
 	self.LockManagedFramesCheckbutton:SetPoint("TOPLEFT", self.DetachManagedFramesCheckbutton, "TOPLEFT", 0, -25)
 	self.LockManagedFramesCheckbutton:SetScript("OnClick", function (button) Mappy:SetLockManagedFrames(button:GetChecked()) end)
 	MappyLockManagedFramesCheckbuttonText:SetText("Lock UI frames position")
@@ -2556,7 +2562,7 @@ Mappy._ButtonOptionsPanel = {}
 ----------------------------------------
 
 function Mappy._ButtonOptionsPanel:New(pParent)
-	return CreateFrame("Frame", nil, pParent)
+	return CreateFrame("Frame", nil, pParent, BackdropTemplateMixin and "BackdropTemplate")
 end
 
 function Mappy._ButtonOptionsPanel:Construct(pParent)
@@ -2573,78 +2579,78 @@ function Mappy._ButtonOptionsPanel:Construct(pParent)
 	
 	-- Hide time-of-day
 	
-	self.HideTimeOfDayCheckbutton = CreateFrame("Checkbutton", "MappyHideTimeOfDayCheckbutton", self, "OptionsCheckButtonTemplate")
+	self.HideTimeOfDayCheckbutton = CreateFrame("Checkbutton", "MappyHideTimeOfDayCheckbutton", self, "OptionsCheckButtonTemplate", BackdropTemplateMixin and "BackdropTemplate")
 	self.HideTimeOfDayCheckbutton:SetPoint("TOPLEFT", self.Title, "BOTTOMLEFT", 0, -15)
 	self.HideTimeOfDayCheckbutton:SetScript("OnClick", function (self) Mappy:SetHideTimeOfDay(self:GetChecked()) end)
 	MappyHideTimeOfDayCheckbuttonText:SetText("Hide calendar button")
 	
 	-- Hide zoom in/out
 
-	self.HideZoomCheckbutton = CreateFrame("Checkbutton", "MappyHideZoomCheckbutton", self, "OptionsCheckButtonTemplate")
+	self.HideZoomCheckbutton = CreateFrame("Checkbutton", "MappyHideZoomCheckbutton", self, "OptionsCheckButtonTemplate", BackdropTemplateMixin and "BackdropTemplate")
 	self.HideZoomCheckbutton:SetPoint("TOPLEFT", self.HideTimeOfDayCheckbutton, "TOPLEFT", 0, -25)
 	self.HideZoomCheckbutton:SetScript("OnClick", function (self) Mappy:SetHideZoom(self:GetChecked()) end)
 	MappyHideZoomCheckbuttonText:SetText("Hide zoom buttons")
 
 	-- Hide world map button
 
-	self.HideWorldMapCheckbutton = CreateFrame("Checkbutton", "MappyHideWorldMapCheckbutton", self, "OptionsCheckButtonTemplate")
+	self.HideWorldMapCheckbutton = CreateFrame("Checkbutton", "MappyHideWorldMapCheckbutton", self, "OptionsCheckButtonTemplate", BackdropTemplateMixin and "BackdropTemplate")
 	self.HideWorldMapCheckbutton:SetPoint("TOPLEFT", self.HideZoomCheckbutton, "TOPLEFT", 0, -25)
 	self.HideWorldMapCheckbutton:SetScript("OnClick", function (self) Mappy:SetHideWorldMap(self:GetChecked()) end)
 	MappyHideWorldMapCheckbuttonText:SetText("Hide world map button")
 
 	-- Hide Tracking Icon
 	
-	self.HideMiniMapTrackingCheckbutton = CreateFrame("Checkbutton", "MappyHideMiniMapTrackingCheckbutton", self, "OptionsCheckButtonTemplate")
+	self.HideMiniMapTrackingCheckbutton = CreateFrame("Checkbutton", "MappyHideMiniMapTrackingCheckbutton", self, "OptionsCheckButtonTemplate", BackdropTemplateMixin and "BackdropTemplate")
 	self.HideMiniMapTrackingCheckbutton:SetPoint("TOPLEFT", self.HideWorldMapCheckbutton, "TOPLEFT", 0, -25)
 	self.HideMiniMapTrackingCheckbutton:SetScript("OnClick", function (self) Mappy:SetHideTracking(self:GetChecked()) end)
 	MappyHideMiniMapTrackingCheckbuttonText:SetText("Hide Tracking icon")
 	
 	-- Hide Time Manager Clock
 	
-	self.HideTimeManagerClockCheckbutton = CreateFrame("Checkbutton", "MappyHideTimeManagerClockCheckbutton", self, "OptionsCheckButtonTemplate")
+	self.HideTimeManagerClockCheckbutton = CreateFrame("Checkbutton", "MappyHideTimeManagerClockCheckbutton", self, "OptionsCheckButtonTemplate", BackdropTemplateMixin and "BackdropTemplate")
 	self.HideTimeManagerClockCheckbutton:SetPoint("TOPLEFT", self.HideMiniMapTrackingCheckbutton, "TOPLEFT", 0, -25)
 	self.HideTimeManagerClockCheckbutton:SetScript("OnClick", function (self) Mappy:SetHideTimeManagerClock(self:GetChecked()) end)
 	MappyHideTimeManagerClockCheckbuttonText:SetText("Hide clock")
 	
 	-- Addon button stacking
 
-	self.AutoStackCheckbutton = CreateFrame("Checkbutton", "MappyAutoStackCheckbutton", self, "OptionsCheckButtonTemplate")
+	self.AutoStackCheckbutton = CreateFrame("Checkbutton", "MappyAutoStackCheckbutton", self, "OptionsCheckButtonTemplate", BackdropTemplateMixin and "BackdropTemplate")
 	self.AutoStackCheckbutton:SetPoint("TOPLEFT", self.HideTimeManagerClockCheckbutton, "TOPLEFT", 0, -40)
 	self.AutoStackCheckbutton:SetScript("OnClick", function (self) Mappy:SetAutoArrangeButtons(self:GetChecked()) end)
 	MappyAutoStackCheckbuttonText:SetText("Auto-arrange addon buttons")
 	
 	-- Starting corner
 	
-	self.TopLeftCheckbutton = CreateFrame("Checkbutton", "MappyTopLeftCheckbutton", self, "OptionsCheckButtonTemplate")
+	self.TopLeftCheckbutton = CreateFrame("Checkbutton", "MappyTopLeftCheckbutton", self, "OptionsCheckButtonTemplate", BackdropTemplateMixin and "BackdropTemplate")
 	self.TopLeftCheckbutton:SetPoint("TOPLEFT", self.AutoStackCheckbutton, "TOPLEFT", 30, -25)
 	self.TopLeftCheckbutton:SetScript("OnClick", function (button) Mappy:corner("TOPLEFT") self:OnShow() end)
 	MappyTopLeftCheckbuttonText:SetText("Top-left")
 	
-	self.TopRightCheckbutton = CreateFrame("Checkbutton", "MappyTopRightCheckbutton", self, "OptionsCheckButtonTemplate")
+	self.TopRightCheckbutton = CreateFrame("Checkbutton", "MappyTopRightCheckbutton", self, "OptionsCheckButtonTemplate", BackdropTemplateMixin and "BackdropTemplate")
 	self.TopRightCheckbutton:SetPoint("TOPLEFT", self.TopLeftCheckbutton, "TOPLEFT", 120, 0)
 	self.TopRightCheckbutton:SetScript("OnClick", function (button) Mappy:corner("TOPRIGHT") self:OnShow() end)
 	MappyTopRightCheckbuttonText:SetText("Top-right")
 	
-	self.BottomLeftCheckbutton = CreateFrame("Checkbutton", "MappyBottomLeftCheckbutton", self, "OptionsCheckButtonTemplate")
+	self.BottomLeftCheckbutton = CreateFrame("Checkbutton", "MappyBottomLeftCheckbutton", self, "OptionsCheckButtonTemplate", BackdropTemplateMixin and "BackdropTemplate")
 	self.BottomLeftCheckbutton:SetPoint("TOPLEFT", self.TopLeftCheckbutton, "TOPLEFT", 0, -25)
 	self.BottomLeftCheckbutton:SetScript("OnClick", function (button) Mappy:corner("BOTTOMLEFT") self:OnShow() end)
 	MappyBottomLeftCheckbuttonText:SetText("Bottom-left")
 	
-	self.BottomRightCheckbutton = CreateFrame("Checkbutton", "MappyBottomRightCheckbutton", self, "OptionsCheckButtonTemplate")
+	self.BottomRightCheckbutton = CreateFrame("Checkbutton", "MappyBottomRightCheckbutton", self, "OptionsCheckButtonTemplate", BackdropTemplateMixin and "BackdropTemplate")
 	self.BottomRightCheckbutton:SetPoint("TOPLEFT", self.TopRightCheckbutton, "TOPLEFT", 0, -25)
 	self.BottomRightCheckbutton:SetScript("OnClick", function (button) Mappy:corner("BOTTOMRIGHT") self:OnShow() end)
 	MappyBottomRightCheckbuttonText:SetText("Bottom-right")
 	
 	-- Direction
 
-	self.CCWCheckbutton = CreateFrame("Checkbutton", "MappyCCWCheckbutton", self, "OptionsCheckButtonTemplate")
+	self.CCWCheckbutton = CreateFrame("Checkbutton", "MappyCCWCheckbutton", self, "OptionsCheckButtonTemplate", BackdropTemplateMixin and "BackdropTemplate")
 	self.CCWCheckbutton:SetPoint("TOPLEFT", self.BottomLeftCheckbutton, "TOPLEFT", 0, -25)
 	self.CCWCheckbutton:SetScript("OnClick", function (self) Mappy:SetCounterClockwise(self:GetChecked()) end)
 	MappyCCWCheckbuttonText:SetText("Counter-clockwise")
 	
 	-- Stacking parent
 
-	self.StackToScreenCheckbutton = CreateFrame("Checkbutton", "MappyStackToScreenCheckbutton", self, "OptionsCheckButtonTemplate")
+	self.StackToScreenCheckbutton = CreateFrame("Checkbutton", "MappyStackToScreenCheckbutton", self, "OptionsCheckButtonTemplate", BackdropTemplateMixin and "BackdropTemplate")
 	self.StackToScreenCheckbutton:SetPoint("TOPLEFT", self.CCWCheckbutton, "TOPLEFT", 0, -25)
 	self.StackToScreenCheckbutton:SetScript("OnClick", function (self) Mappy:SetStackToScreen(self:GetChecked()) end)
 	MappyStackToScreenCheckbuttonText:SetText("Stack around screen")
@@ -2680,7 +2686,7 @@ Mappy._ProfilesPanel = {}
 ----------------------------------------
 
 function Mappy._ProfilesPanel:New(pParent)
-	return CreateFrame("Frame", nil, pParent)
+	return CreateFrame("Frame", nil, pParent, BackdropTemplateMixin and "BackdropTemplate")
 end
 
 function Mappy._ProfilesPanel:Construct(pParent)
